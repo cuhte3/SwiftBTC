@@ -12,7 +12,7 @@ private extension Network {
         switch self {
         case .simnet:
             return 0x3f // starts with S
-        case .testnet, .regtest:
+        case .testnet, .regtest, .signet:
             return 0x6f // starts with m or n
         case .mainnet:
             return 0x00 // starts with 1
@@ -23,7 +23,7 @@ private extension Network {
         switch self {
         case .simnet:
             return 0x7b // starts with s
-        case .testnet, .regtest:
+        case .testnet, .regtest, .signet:
             return 0xc4 // starts with 2
         case .mainnet:
             return 0x05 // starts with 3

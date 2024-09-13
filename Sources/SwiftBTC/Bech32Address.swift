@@ -12,6 +12,8 @@ private extension Network {
         switch self {
         case .regtest:
             return "bcrt"
+        case .signet:
+            return "tbs"
         case .testnet:
             return "tb"
         case .mainnet:

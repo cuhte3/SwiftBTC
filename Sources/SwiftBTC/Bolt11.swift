@@ -29,6 +29,7 @@ public enum Bolt11 {
         case lnbc
         case lntb
         case lnbcrt
+        case lntbs
         case lnsb
 
         public static func forNetwork(_ network: Network) -> Prefix {
@@ -39,6 +40,8 @@ public enum Bolt11 {
                 return .lntb
             case .mainnet:
                 return .lnbc
+            case .signet:
+                return .lntbs
             case .simnet:
                 return .lnsb
             }
@@ -211,6 +214,8 @@ public enum Bolt11 {
     private static func decodeNetwork(humanReadablePart: String) -> Network? {
         if humanReadablePart.starts(with: Prefix.forNetwork(.regtest).rawValue) {
             return .regtest
+        } else if humanReadablePart.starts(with: Prefix.forNetwork(.signet).rawValue) {
+            return .signet
         } else if humanReadablePart.starts(with: Prefix.forNetwork(.testnet).rawValue) {
             return .testnet
         } else if humanReadablePart.starts(with: Prefix.forNetwork(.simnet).rawValue) {

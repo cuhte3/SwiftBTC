@@ -9,6 +9,7 @@ import Foundation
 
 public enum Network: String, Codable, CaseIterable {
     case regtest
+    case signet
     case testnet
     case mainnet
     case simnet
