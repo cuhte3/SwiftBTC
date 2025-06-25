@@ -37,6 +37,8 @@ struct Bech32Address {
             network = .mainnet
         } else if humanReadablePart.lowercased() == Network.simnet.bech32Prefix {
             network = .simnet
+        } else if humanReadablePart.lowercased() == Network.regtest.bech32Prefix {
+            network = .regtest
         } else {
             return nil
         }
