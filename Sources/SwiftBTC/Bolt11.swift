@@ -85,7 +85,7 @@ public enum Bolt11 {
 
     public static func decode(string: String) -> Invoice? {
         guard
-            let (humanReadablePart, data) = Bech32.decode(string, limit: false),
+            let (humanReadablePart, data, variant) = Bech32.decode(string, limit: false),
             humanReadablePart.count > 3,
             let network = decodeNetwork(humanReadablePart: humanReadablePart) else { return nil }
 

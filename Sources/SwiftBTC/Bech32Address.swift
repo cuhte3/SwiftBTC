@@ -29,7 +29,7 @@ struct Bech32Address {
     let network: Network
 
     init?(string: String) {
-        guard let (humanReadablePart, _) = Bech32.decode(string) else { return nil }
+        guard let (humanReadablePart, _, _) = Bech32.decode(string) else { return nil }
 
         if humanReadablePart.lowercased() == Network.testnet.bech32Prefix {
             network = .testnet

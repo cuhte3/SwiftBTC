@@ -12,6 +12,7 @@ import Foundation
 public enum Bech32 {
     private static let alphabet = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
     private static let generator = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3]
+    public enum ChecksumVariant { case bech32, bech32m }
 
     private static func expandHumanReadablePart(_ humanReadablePart: String) -> Data {
         guard let stringBytes = humanReadablePart.data(using: .utf8) else { return Data() }
@@ -39,6 +40,13 @@ public enum Bech32 {
             }
         }
         return chk
+    }
+    
+    private static func checksumVariant(humanReadablePart: String, data: Data) -> ChecksumVariant? {
+        let pm = polymod(values: expandHumanReadablePart(humanReadablePart) + data)
+        if pm == 1 { return .bech32 }
+        if pm == 0x2bc830a3 { return .bech32m }
+        return nil
     }
 
     private static func verifyChecksum(humanReadablePart: String, data: Data) -> Bool {
@@ -76,7 +84,7 @@ public enum Bech32 {
         return !(hasLower && hasUpper)
     }
 
-    public static func decode(_ bechString: String, limit: Bool = true) -> (humanReadablePart: String, data: Data)? {
+    public static func decode(_ bechString: String, limit: Bool = true) -> (humanReadablePart: String, data: Data, variant: ChecksumVariant)? {
         guard hasValidCharacters(bechString) else { return nil }
 
         let bechString = bechString.lowercased()
@@ -90,16 +98,17 @@ public enum Bech32 {
         let dataPart = bechString.suffix(bechString.count - humanReadablePart.count - 1)
 
         var data = Data()
-        for character in dataPart {
-            guard let distance = Bech32.alphabet.indexDistance(of: character) else { return nil }
+        for ch in dataPart {
+            guard let distance = Bech32.alphabet.indexDistance(of: ch) else { return nil }
             data.append(UInt8(distance))
         }
 
-        if !verifyChecksum(humanReadablePart: humanReadablePart, data: data) {
+        guard let variant = checksumVariant(humanReadablePart: humanReadablePart, data: data) else {
             return nil
         }
 
-        return (humanReadablePart, Data(data[..<(data.count - 6)]))
+        // strip the 6 checksum chars
+        return (humanReadablePart, Data(data[..<(data.count - 6)]), variant)
     }
 
     private static func toChars(data: Data) -> String {
